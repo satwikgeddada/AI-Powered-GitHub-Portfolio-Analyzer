@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+python-dotenv
+httpx
+fastmcp
+mcp
+google-generativeai
+pydantic
+python-multipart
+pytest
+pytest-asyncio
+pytest-mock
+respx
