@@ -1,5 +1,5 @@
 // API Configuration
-const API_BASE_URL = 'https://portfolio-analyzer-api-836915016195.us-central1.run.app';
+const API_BASE_URL = 'https://ai-powered-github-portfolio-analyzer.onrender.com/';
 // DOM Elements
 const analyzeBtn = document.getElementById('analyze-btn');
 const usernameInput = document.getElementById('username-input');
