@@ -10,7 +10,9 @@ An agent-driven web app that turns any GitHub profile into an AI-analyzed portfo
 ![MCP](https://img.shields.io/badge/Protocol-MCP-black)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-[Dashboard screenshot](docs/dashboard.png) 
+| Dashboard |
+| --- |
+| ![Dashboard screenshot](docs/dashboard.png) |
 
 ## ✨ Features
 
