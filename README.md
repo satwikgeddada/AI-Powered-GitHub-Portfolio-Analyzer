@@ -1,116 +1,145 @@
 # AI-Powered GitHub Portfolio Analyzer 🚀
 
-An intelligent, agent-driven platform that transforms GitHub profiles into professional, AI-analyzed portfolio dashboards and downloadable developer cards. Using Gemini 1.5 Flash and the Model Context Protocol (MCP), it provides deep insights into coding personality, technical skills, and developer impact.
+An agent-driven web app that turns any GitHub profile into an AI-analyzed portfolio dashboard and a downloadable developer card. It uses Google Gemini for analysis and the Model Context Protocol (MCP) to expose GitHub-scraping and scoring as tools the agent can call.
 
-![Modern Glassmorphism UI](https://img.shields.io/badge/UI-Glassmorphism-blue)
-![AI Model](https://img.shields.io/badge/AI-Gemini%201.5%20Flash-orange)
-![Framework](https://img.shields.io/badge/Backend-FastAPI-green)
+**🔗 Live demo:** https://ai-powered-github-portfolio-analyze.vercel.app
+
+![Python](https://img.shields.io/badge/Python-3.9+-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688?logo=fastapi&logoColor=white)
+![Gemini](https://img.shields.io/badge/AI-Google%20Gemini-8E75B2)
+![MCP](https://img.shields.io/badge/Protocol-MCP-black)
+![License](https://img.shields.io/badge/License-MIT-green)
+
+[Dashboard screenshot](docs/dashboard.png) 
 
 ## ✨ Features
 
-- **🧠 AI Personality Analysis:** Uses Gemini 1.5 Flash to analyze coding styles and project contributions to define a "Coding Personality".
-- **📊 Interactive Dashboard:** Responsive Glassmorphism UI featuring developer stats, professional summaries, and technical skill charts.
-- **🪪 Portfolio Cards:** Generates sleek, downloadable developer portfolio cards (as PDF or Image).
-- **🤖 Agentic Workflow:** Powered by a specialized AI agent that orchestrates GitHub scraping, analysis, scoring, and card generation.
-- **🔌 MCP Integration:** Implements Model Context Protocol (MCP) for tool-based interactions between the LLM and system services.
-- **🌓 Dark/Light Mode:** Full support for modern theme switching with smooth transitions.
+- **🧠 Coding personality analysis:** Gemini reads a developer's repos, languages and activity and describes their coding style.
+- **📊 Interactive dashboard:** Developer stats, a professional summary and skill charts in a responsive glassmorphism UI.
+- **🪪 Downloadable portfolio card:** Export your card as an image or PDF.
+- **🤖 Agentic workflow:** A `PortfolioAnalyzerAgent` orchestrates scraping, analysis, scoring and card generation.
+- **🔌 MCP tools:** The GitHub and scoring logic is exposed as MCP tools via FastMCP.
+- **🌓 Dark/light theme.**
 
-## 🛠️ Tech Stack
+## 🏗️ Architecture
 
-### Frontend
-- **HTML5 & CSS3:** Modern Glassmorphism UI with responsive CSS animations.
-- **JavaScript (ES6+):** Async/Await for API interactions and DOM manipulation.
-- **Chart.js:** For visualizing developer skill distributions and impact.
-- **html2canvas & jsPDF:** Client-side generation of downloadable portfolio cards.
+```mermaid
+flowchart LR
+    U[Browser<br/>HTML / CSS / JS] -->|username| API[FastAPI<br/>main.py]
+    API --> AG[PortfolioAnalyzerAgent<br/>agent.py]
+    AG -->|tool calls| MCP[MCP Server<br/>mcp_server.py]
+    MCP --> GH[GitHub REST API<br/>github_service.py]
+    AG --> AI[Gemini<br/>ai_service.py]
+    AG -->|analysis + score + card data| API
+    API --> U
+```
 
-### Backend
-- **FastAPI:** High-performance Python web framework for the core API.
-- **Google Generative AI:** Integration with Gemini 1.5 Flash for intelligent analysis.
-- **FastMCP:** Used to build the Model Context Protocol server for the AI agent tools.
-- **GitHub REST API:** For fetching real-time repository and user data.
+### Agent workflow
 
-### Infrastructure
-- **Docker & Docker Compose:** Containerized environment for easy deployment.
-- **Google Cloud Run:** Optimized for serverless deployment.
+1. **Scrape:** fetch user metadata, repos, languages and contribution stats with the `scrape_github` tool.
+2. **Analyze:** Gemini determines coding personality and technical focus.
+3. **Summarize:** generate a short professional bio based on the developer's strengths.
+4. **Score:** compute a Developer Score from stars, forks and contribution consistency.
+5. **Generate card:** combine the insights into a structured format for the UI.
+6. **Save:** persist the analysis and prepare the downloadable assets.
 
-## 🚀 Getting Started
+## 🛠️ Tech stack
+
+| Layer | Tools |
+|---|---|
+| Frontend | HTML5, CSS3, JavaScript (ES6+), Chart.js, html2canvas, jsPDF |
+| Backend | FastAPI, FastMCP, Google Generative AI SDK, GitHub REST API |
+| Infra | Docker, Docker Compose, Google Cloud Run (`deploy.sh`), Vercel (demo) |
+
+## 🚀 Getting started
 
 ### Prerequisites
+
 - Python 3.9+
-- Docker & Docker Compose (Optional, for containerized run)
-- GitHub Personal Access Token (for higher rate limits)
-- Google Gemini API Key
+- A [Google Gemini API key](https://aistudio.google.com/)
+- A [GitHub personal access token](https://github.com/settings/tokens) (optional, but avoids low rate limits)
+- Docker and Docker Compose (optional)
 
-### Environment Setup
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/ai-github-portfolio-analyzer.git
-   cd ai-github-portfolio-analyzer
-   ```
+### 1. Clone and configure
 
-2. Create a `.env` file from the example:
-   ```bash
-   cp .env.example .env
-   ```
+```bash
+git clone https://github.com/satwikgeddada/AI-Powered-GitHub-Portfolio-Analyzer.git
+cd AI-Powered-GitHub-Portfolio-Analyzer
+cp .env.example .env
+```
 
-3. Configure your keys in `.env`:
-   ```env
-   GEMINI_API_KEY=your_gemini_api_key_here
-   GITHUB_TOKEN=your_github_token_here (optional, but recommended)
-   PORT=8000
-   ```
+Edit `.env`:
 
-### Running with Docker (Recommended)
-The easiest way to get the app running is using Docker Compose:
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+GEMINI_MODEL=your_preferred_gemini_flash_model   # check Google's docs for currently supported model names
+GITHUB_TOKEN=your_github_token_here               # optional, recommended
+PORT=8000
+```
+
+> ⚠️ Never commit your `.env` file. Only `.env.example` belongs in the repo.
+
+### 2a. Run with Docker (recommended)
+
 ```bash
 docker-compose up --build
 ```
-The application will be available at `http://localhost:8000`.
 
-### Local Development Setup
-**Backend:**
+Open http://localhost:8000.
+
+### 2b. Run locally
+
 ```bash
 cd backend
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 python main.py
 ```
 
-**Frontend:**
-The frontend is served statically by the FastAPI backend. Simply visit `http://localhost:8000` once the backend is running.
+The frontend is served statically by FastAPI, so http://localhost:8000 is all you need.
 
-## 🧠 Agentic Workflow
+## 📂 Project structure
 
-The `PortfolioAnalyzerAgent` follows a strict execution sequence to ensure high-quality analysis:
-1. **Scrape:** Fetches user metadata, repos, languages, and contribution stats via the `scrape_github` tool.
-2. **Analyze:** Gemini processes the raw data to determine coding personality and technical focus.
-3. **Summarize:** Generates a professional bio tailored to the developer's strengths.
-4. **Score:** Calculates a "Developer Score" based on stars, forks, and contribution consistency.
-5. **Generate Card:** Combines insights into a structured format for the UI.
-6. **Save:** Persists the analysis and prepares the downloadable assets.
-
-## 📂 Project Structure
-
-```text
-ai-github-portfolio-analyzer/
+```
+AI-Powered-GitHub-Portfolio-Analyzer/
 ├── backend/
-│   ├── agent.py          # AI Agent orchestration logic
-│   ├── ai_service.py     # Gemini API integration
-│   ├── github_service.py # GitHub API interactions
-│   ├── mcp_server.py     # MCP tool server implementation
-│   ├── main.py           # FastAPI entry point
-│   └── static/           # Generated portfolio cards
+│   ├── agent.py            # Agent orchestration logic
+│   ├── ai_service.py       # Gemini integration
+│   ├── github_service.py   # GitHub API calls
+│   ├── mcp_server.py       # MCP tool server
+│   ├── main.py             # FastAPI entry point
+│   └── static/             # Generated portfolio cards
 ├── frontend/
-│   ├── index.html        # Main dashboard UI
-│   ├── app.js            # Frontend logic and charts
-│   └── style.css         # Glassmorphism styling
-├── docker-compose.yml    # Container orchestration
-└── deploy.sh             # Cloud Run deployment script
+│   ├── index.html          # Dashboard UI
+│   ├── app.js              # Frontend logic and charts
+│   └── style.css           # Glassmorphism styling
+├── docker-compose.yml
+└── deploy.sh               # Cloud Run deployment script
 ```
 
-## 📄 License
-This project is licensed under the MIT License - see the LICENSE file for details.
+## 🗺️ Roadmap
+
+- [ ] Caching of GitHub API responses to reduce rate-limit hits
+- [ ] Side-by-side comparison of two developers
+- [ ] Unit tests for scoring logic and GitHub service
+- [ ] GitHub Actions CI (lint + tests)
+- [ ] Sample output and screenshots in `docs/`
+
+## 💡 What I learned
+
+- Structuring an LLM agent around explicit tools using MCP
+- Handling third-party API rate limits and failures gracefully
+- Containerizing a Python backend and deploying it to the cloud
 
 ## 🤝 Contributing
-Contributions are welcome! Please feel free to submit a Pull Request.
+
+Issues and pull requests are welcome. For larger changes, please open an issue first to discuss what you'd like to change.
+
+## 📄 License
+
+MIT. See the [LICENSE](LICENSE) file.
+
+## 👤 Author
+
+**Satwik Geddada**: [GitHub](https://github.com/satwikgeddada) · [LinkedIn](https://www.linkedin.com/in/satwik-geddada-72bb172b9)
