@@ -142,4 +142,7 @@ MIT. See the [LICENSE](LICENSE) file.
 
 ## 👤 Author
 
-**Satwik Geddada**: [GitHub](https://github.com/satwikgeddada) · [LinkedIn](https://www.linkedin.com/in/satwik-geddada-72bb172b9)
+**Satwik Geddada**:
+- 🌐 Portfolio: [satwik-geddada-portfolio.vercel.app](https://satwik-geddada-portfolio.vercel.app/)
+- 💻 GitHub: [@satwikgeddada](https://github.com/satwikgeddada)
+- 💼 LinkedIn: [satwik-geddada](https://www.linkedin.com/in/satwik-geddada-72bb172b9)
